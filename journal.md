@@ -63,3 +63,44 @@ practical cutoff, not an exact threshold.
 Notes:
 - Tricep Rope Pushdown qualifies at exactly 30 — the thinnest series.
 - Lying Leg Curl and Machine Reverse Fly have no sessions after the cutoff.
+
+
+## Entry 2 — 2026-10-19 — Baselines and walk-forward evaluation
+
+### Evaluation method
+Walk-forward, per exercise: to predict session T, use only sessions
+before T, then slide forward one session. Predictions start after 10
+sessions of history. Every method is scored on the same 244 predictions.
+Code: src/evaluate.py, src/baseline.py
+
+### Correction found
+The pipeline's prev_score and rolling_mean_score_3 are lagged by one
+session: they describe the session BEFORE the current row. The latest
+score known at prediction time is performance_score (the current
+session), so the baselines use that. The old 6.45 kg baseline used
+prev_score and understated the baseline.
+
+### Results (MAE, kg)
+| Exercise | n | last_value | rolling_mean_3 |
+|---|---|---|---|
+| Cable Lateral Raise | 30 | 1.52 | 2.14 |
+| Dumbbell Lateral Raise | 40 | 1.70 | 2.17 |
+| Incline DB Bench Press | 30 | 3.16 | 3.33 |
+| Lat Pulldown | 33 | 3.65 | 5.21 |
+| Lying Leg Curl | 37 | 5.79 | 8.78 |
+| Machine Reverse Fly | 24 | 6.01 | 6.52 |
+| Squat | 28 | 5.64 | 8.17 |
+| Tricep Rope Pushdown | 22 | 3.28 | 4.29 |
+| ALL | 244 | 3.76 | 5.03 |
+
+### Updated success criterion
+Beat last_value (3.76 kg overall, walk-forward), replacing the old
+6.45 kg target. The bar is now harder.
+
+### Why last_value beat the rolling mean on every exercise
+The rolling mean lags behind because it includes older, weaker sessions:
+it predicted too low 62% of the time, about 1.15 kg under on average.
+Since I'm still slowly progressing, and my weight often stays exactly
+the same between sessions, the most recent session is a better guide
+than an average of the last three.
+
