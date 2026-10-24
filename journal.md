@@ -104,3 +104,54 @@ Since I'm still slowly progressing, and my weight often stays exactly
 the same between sessions, the most recent session is a better guide
 than an average of the last three.
 
+
+## Entry 3 — 2026-10-24 — First model: Ridge regression
+
+### Features (all known by the end of the current session)
+- days_since_prev_session: gap before this session
+- above_recent_avg: this score minus the mean of the 3 sessions before it
+- rolling_std_score_3: spread of the 3 sessions before this one
+- total_volume_kg: this session's total volume
+- sessions_trained_before: number of earlier sessions
+- best_set_reps: reps in this session's top set
+Leakage check: none of them use the target or any later session.
+
+### Design
+- The model predicts the change (next score - this score), then adds it
+  to this session's score. If the features are useless, Ridge shrinks
+  toward "change = 0", which is the last_value baseline.
+- One model per exercise, refitted at every walk-forward step.
+- Features standardised; scaler and Ridge strength (RidgeCV) fitted on
+  training rows only.
+Code: src/ridge_model.py
+
+### Results (MAE, kg)
+| Exercise | n | Baseline | Ridge | Diff |
+|---|---|---|---|---|
+| Cable Lateral Raise | 30 | 1.52 | 1.84 | +0.32 |
+| Dumbbell Lateral Raise | 40 | 1.70 | 2.10 | +0.40 |
+| Incline DB Bench Press | 30 | 3.16 | 3.35 | +0.19 |
+| Lat Pulldown | 33 | 3.65 | 3.93 | +0.28 |
+| Lying Leg Curl | 37 | 5.79 | 6.25 | +0.46 |
+| Machine Reverse Fly | 24 | 6.01 | 6.67 | +0.66 |
+| Squat | 28 | 5.64 | 6.32 | +0.68 |
+| Tricep Rope Pushdown | 22 | 3.28 | 3.32 | +0.03 |
+| ALL | 244 | 3.76 | 4.14 | +0.38 |
+
+Ridge beats the baseline on 0 of 8 exercises. Paired Wilcoxon test on
+all 244 errors: p < 0.001, so the baseline's advantage is not chance.
+
+### Extra check
+A model with no features, which just adds my average past change to
+today's score, also loses: MAE 3.97 kg. So even the upward drift does
+not help, and the features add a further 0.17 kg of error.
+
+### Answer
+No. At this data size, Ridge with training-load, frequency and recovery
+features does not beat "same as last session".
+
+### Why Ridge couldn't beat "same as last session"
+Strength changes slowly, so the last session's weight and reps are
+already a good estimate (25% of sessions don't change at all). The
+remaining changes depend on things I didn't log, like sleep and effort,
+and with only 10–47 sessions per exercise the model mostly learned noise.
