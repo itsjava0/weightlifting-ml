@@ -1,0 +1,15 @@
+run,MAE,vs_full,vs_baseline
+full model (all 6),4.143,0.0,0.382
+no features (drift only),3.971,-0.172,0.21
+drop days_since_prev_session,4.115,-0.027,0.355
+drop above_recent_avg,4.266,0.123,0.505
+drop rolling_std_score_3,4.157,0.014,0.396
+drop total_volume_kg,4.241,0.098,0.48
+drop sessions_trained_before,4.199,0.056,0.438
+drop best_set_reps,4.274,0.131,0.513
+only days_since_prev_session,4.078,-0.065,0.317
+only above_recent_avg,4.211,0.068,0.45
+only rolling_std_score_3,4.108,-0.034,0.348
+only total_volume_kg,4.111,-0.031,0.351
+only sessions_trained_before,3.994,-0.149,0.233
+only best_set_reps,3.991,-0.152,0.23
