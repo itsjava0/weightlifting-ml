@@ -113,7 +113,8 @@ than an average of the last three.
 - rolling_std_score_3: spread of the 3 sessions before this one
 - total_volume_kg: this session's total volume
 - sessions_trained_before: number of earlier sessions
-- best_set_reps: reps in this session's top set
+- best_set_reps: most reps in any set of this session (corrected on
+  2026-10-25; first described as reps in the top set)
 Leakage check: none of them use the target or any later session.
 
 ### Design
@@ -155,3 +156,109 @@ Strength changes slowly, so the last session's weight and reps are
 already a good estimate (25% of sessions don't change at all). The
 remaining changes depend on things I didn't log, like sleep and effort,
 and with only 10–47 sessions per exercise the model mostly learned noise.
+
+## Entry 4 — 2026-10-25 — Feature test (ablation) and RandomForest
+
+### Method
+Same walk-forward evaluator, same 244 predictions, same Ridge set-up as
+entry 3. Fourteen runs:
+- Drop one: remove one feature from the full model. If error rises, the
+  feature was helping; if it falls, it was adding noise.
+- Only one: a model with a single feature, compared with the baseline.
+- No features: only adds the average past change to today's score.
+Code: src/ablation.py, src/random_forest.py
+
+### Results (MAE, kg; baseline = 3.76)
+| Run | MAE |
+|---|---|
+| No features (average change only) | 3.97 |
+| Only best_set_reps | 3.99 |
+| Only sessions_trained_before | 3.99 |
+| Only days_since_prev_session | 4.08 |
+| Only rolling_std_score_3 | 4.11 |
+| Only total_volume_kg | 4.11 |
+| Full model (all 6) | 4.14 |
+| Only above_recent_avg | 4.21 |
+
+Drop one (change vs full model, 4.14): dropping days_since_prev_session
+improved the model (-0.03); dropping any other feature made it worse
+(+0.01 to +0.13).
+
+### What it shows
+1. No feature carries signal: every single-feature model is worse than
+   the no-feature model.
+2. The drop-one results look like most features "help", but the full
+   model is already worse than using no features. They only help by
+   partly cancelling each other's noise, not by predicting anything.
+3. Differences between features are 0.01-0.15 kg on a noisy target, so
+   their ranking is not meaningful. The robust result is the overall one.
+
+### RandomForest (optional check)
+| Exercise | Baseline | Ridge | RandomForest |
+|---|---|---|---|
+| ALL (244) | 3.76 | 4.14 | 4.25 |
+
+RandomForest (the model used by Baek et al.) did worse than Ridge, so a
+non-linear model does not help. It beat the baseline on one exercise,
+Tricep Rope Pushdown (3.10 vs 3.28 kg, n = 22), but a paired Wilcoxon
+test gives p = 0.59, so this is very likely chance. Not kept as a main
+result.
+
+### What surprised me most
+Rest days made predictions worse. I expected rest to matter for
+strength, but the model can't tell whether a gap was planned rest or
+illness, so it can't tell which way to adjust. This matches Objection 3
+from Phase 1.
+
+## Entry 5 — 2026-10-25 — Robustness checks and threats to validity
+
+### Method
+The dataset is rebuilt from the original log in three ways, and both the
+baseline and Ridge are re-run on each version, so they are always
+compared on the same data. Code: src/robustness.py
+
+### Results (walk-forward MAE, kg)
+| Check | Predictions | Baseline | Ridge | Ridge wins | p |
+|---|---|---|---|---|---|
+| 1. Reference (Epley, all reps) | 244 | 3.76 | 4.15 | 0 of 8 | <0.001 |
+| 2. Top sets <=10 reps only | 115 | 5.44 | 7.26 | 1 of 8 | 0.001 |
+| 3. Brzycki, <=10 reps | 115 | 5.58 | 7.56 | 1 of 8 | <0.001 |
+
+1. The reference rebuild reproduces Days 2-3 (3.76 exactly; Ridge 4.15
+   vs 4.14 from rounding differences), so the rebuild matches the pipeline.
+2. Keeping only sets within Brzycki's reliable range (<=10 reps), Ridge
+   loses by even more. This check costs a lot of data: lateral raises
+   are mostly done at 12+ reps, so Dumbbell Lateral Raise drops from 50
+   to 9 sessions and the number of predictions halves.
+3. Brzycki instead of Epley changes almost nothing (5.58 vs 5.44), so
+   the choice of formula does not drive the result.
+
+Conclusion: the main finding holds in every check.
+
+### Comparison with Greig et al. (2023)
+The baseline's error is 5.4% of the lifted weight, below Greig et al.'s
+~9.8% for load-velocity 1RM prediction. They measured a different task
+(a one-off 1RM test, not next-session prediction), so this is context,
+not a direct comparison.
+
+### Gym change
+From Oct 2024 to Oct 2025 I trained at almost always the same gym. From
+Oct 2025 I rotated between 3-4 gyms per month. I expected this to make
+predictions worse, but the baseline's error was actually lower after the
+change (3.10 kg, 4.3%, n = 102) than before it (4.23 kg, 7.5%, n = 142).
+A likely reason is that the earlier period also had bigger swings in
+progress, so the gym change is confounded with training stage and its
+effect can't be separated.
+
+### Threats to validity
+- Single athlete: results describe me, not lifters in general.
+- Small samples: 22-40 predictions per exercise, so per-exercise results
+  are fragile.
+- Self-logged data: weights and reps typed by hand; two typos were found
+  and removed, others may remain.
+- Missing causes: no sleep, effort (RPE) or bodyweight logged.
+- Gym and equipment changes: from Oct 2025 I rotated between 3-4 gyms,
+  and the same exercise on a different machine can give a different
+  weight.
+- The <=10-rep check loses much of the data, especially lateral raises.
+- Ambiguous gaps: days_since_prev_session can't tell rest from illness.
