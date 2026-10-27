@@ -1,0 +1,5 @@
+method,n,MAE,vs_baseline,p_vs_baseline
+baseline (last_value),82,3.703,0.0,
+"ridge, sleep only",82,4.373,0.67,0.0
+"ridge, 6 features",82,4.639,0.936,0.0
+"ridge, 6 features + sleep",82,4.912,1.209,0.0
