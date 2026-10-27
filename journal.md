@@ -262,3 +262,45 @@ effect can't be separated.
   weight.
 - The <=10-rep check loses much of the data, especially lateral raises.
 - Ambiguous gaps: days_since_prev_session can't tell rest from illness.
+
+## Entry 6 — 2026-10-27 — Sleep test
+
+### Why
+Sleep was one of my original predictors, and missing sleep data was one
+of my explanations for why the models fail. I have Apple Watch sleep
+data from late June 2025, so I tested it.
+
+### Data
+- Source: Apple Health export (data/raw/sleep_data.csv), Apple Watch
+  records only. Left out: "Pillow" (records the same nights as the watch,
+  would double-count) and older iPhone records (time in bed, not sleep).
+- Nightly sleep = hours of Core + Deep + REM + Unspecified sleep.
+  Nights under 2 hours treated as missing (watch off for part of night).
+- 396 usable nights, 2025-06-23 to 2026-09-18, mean 6.93 h.
+- Features: sleep_last_night (night before the predicted session) and
+  sleep_avg_3 (mean of the 3 nights before it). Since last night's sleep
+  is only known on the day of the next workout, these predictions are
+  framed as "made on the morning of the next workout, before lifting".
+Code: src/sleep.py
+
+### Results (walk-forward MAE, kg; only sessions with sleep data)
+| Method | n | MAE |
+|---|---|---|
+| Baseline (same as last session) | 82 | 3.70 |
+| Ridge, sleep only | 82 | 4.37 |
+| Ridge, 6 features | 82 | 4.64 |
+| Ridge, 6 features + sleep | 82 | 4.91 |
+
+Adding sleep to the 6-feature model: +0.27 kg (paired Wilcoxon
+p = 0.64, not significant). Correlation of last night's sleep with the
+next-session change: -0.07.
+
+### Conclusion
+No sign that sleep improves the prediction in this data. This is a weak
+test: 82 predictions over about 11 months, with models trained on little
+history. So the claim is "no effect detected", not "sleep doesn't affect
+strength".
+
+### Note for publishing
+Sleep data is personal health data. Plan: keep sleep_data.csv out of the
+public repo and say in the README that it's available on request.
