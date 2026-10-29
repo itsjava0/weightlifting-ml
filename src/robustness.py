@@ -144,17 +144,3 @@ pd.set_option("display.width", 220)
 print("\nWalk-forward MAE (kg). diff > 0 means the baseline wins.\n")
 print(res.to_string(index=False))
 print("\nGreig et al. (2023) load-velocity benchmark: SEE ~ 9.8% of 1RM")
-
-# Gym change: one gym until Oct 2025, then rotating between 3-4 gyms.
-# Compare baseline error before and after (original Day 2 predictions).
-base = pd.read_csv(REPORTS / "baseline_predictions.csv", parse_dates=["timestamp"])
-base = base[base["method"] == "last_value"].copy()
-base["err"] = (base["predicted"] - base["actual"]).abs()
-base["err_%"] = 100 * base["err"] / base["actual"]
-base["period"] = np.where(base["timestamp"] < "2025-10-01",
-                          "one gym (before Oct 2025)", "3-4 gyms (from Oct 2025)")
-gym = base.groupby("period").agg(n=("err", "size"), MAE=("err", "mean"),
-                                 MAE_pct=("err_%", "mean")).round(2)
-gym.to_csv(REPORTS / "gym_change.csv")
-print("\nBaseline error before vs after the gym change:\n")
-print(gym.to_string())

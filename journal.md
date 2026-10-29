@@ -252,6 +252,11 @@ change (3.10 kg, 4.3%, n = 102) than before it (4.23 kg, 7.5%, n = 142).
 A likely reason is that the earlier period also had bigger swings in
 progress, so the gym change is confounded with training stage and its
 effect can't be separated.
+(Dropped on 2026-10-29: because the effect can't be separated from
+training stage, this comparison is not in the final report, and its
+code was removed from src/robustness.py and src/figures.py. The
+October 2025 change is still marked in Figure 1 and listed under
+threats to validity.)
 
 ### Threats to validity
 - Single athlete: results describe me, not lifters in general.

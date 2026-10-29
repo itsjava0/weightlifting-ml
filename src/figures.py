@@ -9,7 +9,6 @@ Outputs (in reports/figures/):
   fig2_pred_vs_actual.png    predicted vs actual, baseline and Ridge
   fig3_error_by_exercise.png baseline vs Ridge MAE per exercise
   fig4_ablation.png          feature test: MAE of every run
-  fig5_gym_change.png        baseline error before vs after the gym change
 """
 from pathlib import Path
 
@@ -127,16 +126,3 @@ ax.set_xlim(3.5, a["MAE"].max() + 0.2)
 ax.set_xlabel("Mean absolute error (kg), lower is better (axis starts at 3.5)")
 ax.grid(axis="y", visible=False)
 save(fig, "fig4_ablation.png")
-
-# --- Figure 5: gym change -------------------------------------------------------
-g = pd.read_csv(REPORTS / "gym_change.csv").set_index("period")
-g = g.loc[["one gym (before Oct 2025)", "3-4 gyms (from Oct 2025)"]]
-fig, ax = plt.subplots(figsize=(6, 3.4))
-labels = ["One gym\nOct 2024 - Sep 2025", "3-4 gyms\nOct 2025 - May 2026"]
-ax.bar(labels, g["MAE_pct"], width=0.5, color=BLUE)
-for i, (pct, n) in enumerate(zip(g["MAE_pct"], g["n"])):
-    ax.text(i, pct + 0.15, f"{pct:.1f}%  (n = {n})", ha="center", fontsize=9, color=INK)
-ax.set_ylabel("Baseline error (% of e1RM)")
-ax.grid(axis="x", visible=False)
-ax.set_ylim(0, g["MAE_pct"].max() * 1.25)
-save(fig, "fig5_gym_change.png")
