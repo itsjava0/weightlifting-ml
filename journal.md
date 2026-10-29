@@ -120,7 +120,10 @@ Leakage check: none of them use the target or any later session.
 ### Design
 - The model predicts the change (next score - this score), then adds it
   to this session's score. If the features are useless, Ridge shrinks
-  toward "change = 0", which is the last_value baseline.
+  the feature weights to zero and predicts the average past change (the
+  "no features" model in entry 4), which is close to the last_value
+  baseline. (Corrected on 2026-10-28; first described as shrinking
+  toward "change = 0". The intercept is not penalised.)
 - One model per exercise, refitted at every walk-forward step.
 - Features standardised; scaler and Ridge strength (RidgeCV) fitted on
   training rows only.

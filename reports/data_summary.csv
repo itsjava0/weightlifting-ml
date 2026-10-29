@@ -1,0 +1,8 @@
+,value
+rows,324.0
+no_change_%,27.5
+change_under_2.5kg_%,58.0
+rolling_mean_too_low_%,62.3
+rolling_mean_median_error_kg,-1.15
+min_training_rows,10.0
+max_training_rows,49.0

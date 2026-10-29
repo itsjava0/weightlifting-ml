@@ -1,6 +1,9 @@
 """Day 6: the report figures. Reads only files produced by the other
 scripts, so every figure matches the numbers in reports/.
 
+Following APA style, figures carry no title inside the image: the figure
+number, title and note are written in the report above and below each one.
+
 Outputs (in reports/figures/):
   fig1_progression.png       Lat Pulldown e1RM over time, gym change marked
   fig2_pred_vs_actual.png    predicted vs actual, baseline and Ridge
@@ -54,7 +57,6 @@ gym = pd.Timestamp("2025-10-01")
 ax.axvline(gym, color=INK_3, lw=1, ls="--", zorder=1)
 ax.text(gym, ax.get_ylim()[1], "  rotating 3-4 gyms from here", va="top",
         ha="left", color=INK_2, fontsize=9)
-ax.set_title("Lat Pulldown: estimated 1RM per session")
 ax.set_ylabel("e1RM (kg)")
 ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
 ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
@@ -82,8 +84,6 @@ for ax, p, color, label in [(axes[0], base, BLUE, "Baseline (same as last sessio
     ax.set_aspect("equal")
     ax.set_xlabel("Actual next-session e1RM (kg)")
 axes[0].set_ylabel("Predicted e1RM (kg)")
-fig.suptitle("Predicted vs actual, 244 walk-forward predictions (dashed = perfect)",
-             x=0.06, ha="left", fontsize=12, fontweight="bold", color=INK)
 fig.tight_layout()
 save(fig, "fig2_pred_vs_actual.png")
 
@@ -103,7 +103,6 @@ for i, (b, r) in enumerate(zip(t["baseline_MAE"], t["ridge_MAE"])):
 ax.set_yticks(list(y))
 ax.set_yticklabels(t["exercise"])
 ax.set_xlabel("Mean absolute error (kg), lower is better")
-ax.set_title("Ridge loses to the baseline on all 8 exercises")
 ax.grid(axis="y", visible=False)
 ax.legend(loc="lower right")
 save(fig, "fig3_error_by_exercise.png")
@@ -126,7 +125,6 @@ ax.text(base_mae - 0.02, -0.75, f"baseline {base_mae:.2f}", color=INK,
 ax.set_ylim(-1.1, len(a) - 0.5)
 ax.set_xlim(3.5, a["MAE"].max() + 0.2)
 ax.set_xlabel("Mean absolute error (kg), lower is better (axis starts at 3.5)")
-ax.set_title("Feature test: no model beats the baseline")
 ax.grid(axis="y", visible=False)
 save(fig, "fig4_ablation.png")
 
@@ -139,7 +137,6 @@ ax.bar(labels, g["MAE_pct"], width=0.5, color=BLUE)
 for i, (pct, n) in enumerate(zip(g["MAE_pct"], g["n"])):
     ax.text(i, pct + 0.15, f"{pct:.1f}%  (n = {n})", ha="center", fontsize=9, color=INK)
 ax.set_ylabel("Baseline error (% of e1RM)")
-ax.set_title("Baseline error before and after the gym change")
 ax.grid(axis="x", visible=False)
 ax.set_ylim(0, g["MAE_pct"].max() * 1.25)
 save(fig, "fig5_gym_change.png")

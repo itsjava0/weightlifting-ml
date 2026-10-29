@@ -5,9 +5,12 @@ Design choices (see journal entry 3):
 1. Predict the CHANGE, not the level.
    The model predicts  change = next score - this session's score,
    then adds it back:  prediction = this session's score + predicted change.
-   Ridge shrinks coefficients toward zero, so a model with no useful
-   features falls back to "change = 0", which IS the last_value baseline.
-   The model therefore has to earn every kg it moves away from the baseline.
+   Ridge shrinks the feature coefficients toward zero. The intercept is
+   not penalised, so a model whose features carry no information falls
+   back to "change = average past change" (the no-feature model in
+   ablation.py), which is close to, but not the same as, the last_value
+   baseline. (Corrected 2026-10-28: first described as falling back to
+   "change = 0".)
 
 2. One model per exercise, refitted at every walk-forward step on that
    exercise's earlier sessions only.
