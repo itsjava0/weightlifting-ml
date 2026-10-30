@@ -25,6 +25,7 @@ OUT.mkdir(exist_ok=True)
 
 # Palette (validated reference palette, light mode) and recessive chrome.
 BLUE, ORANGE = "#2a78d6", "#eb6834"
+PINK = "#f4979e"  # light red, used for ridge regression in Figure 3
 INK, INK_2, INK_3 = "#0b0b0b", "#52514e", "#8a8984"
 GRID = "#e6e5e1"
 plt.rcParams.update({
@@ -94,7 +95,7 @@ h = 0.38
 fig, ax = plt.subplots(figsize=(8, 4.4))
 ax.barh([i + h / 2 + 0.02 for i in y], t["baseline_MAE"], height=h, color=BLUE,
         label="Baseline (same as last session)")
-ax.barh([i - h / 2 - 0.02 for i in y], t["ridge_MAE"], height=h, color=ORANGE,
+ax.barh([i - h / 2 - 0.02 for i in y], t["ridge_MAE"], height=h, color=PINK,
         label="Ridge regression")
 for i, (b, r) in enumerate(zip(t["baseline_MAE"], t["ridge_MAE"])):
     ax.text(b + 0.08, i + h / 2 + 0.02, f"{b:.2f}", va="center", fontsize=8, color=INK_2)

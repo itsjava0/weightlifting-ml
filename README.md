@@ -2,20 +2,31 @@
 
 A single-athlete case study by Javokhir Abduraxmonov (Tashkent, 2026).
 
-I logged my training for 22 months in the LiftOff app. This project asks
-whether that log can predict my strength in the next session of an
-exercise, measured as estimated one-repetition maximum (e1RM), more
-accurately than the simplest rule: *it will be the same as last time*.
+**Question:** I logged every set I lifted for 22 months. Can that log
+predict how strong I will be in my next session better than the simplest
+rule, "it will be the same as last time"?
 
-For my data, the answer is no. Across 244 predictions on eight exercises,
-no model I tested beat that rule.
+**Answer:** No, not for me. Across 244 predictions on eight exercises,
+every model I tried was less accurate than that rule.
+
+**Why:** My strength barely changes from one session to the next (27.5%
+of the time it did not change at all), so the last session is already a
+good guess, and what probably drives the bigger jumps, like effort or how
+I felt that day, is not in the log.
+
+![Average prediction error per exercise: the "same as last time" rule has a lower error than ridge regression on all eight exercises](reports/figures/fig3_error_by_exercise.png)
+
+*Average prediction error per exercise, in kg (lower is better). "Same as
+last time" (blue) beat ridge regression (light red) on all eight exercises,
+though on Tricep Rope Pushdown only by 0.03 kg (the chart's 3.28 and 3.32
+are rounded).*
 
 **Full report:** [Research_Report.pdf](reports/Research_Report.pdf)
 (APA style, 19 pages; [Word version](reports/Research_Report.docx))
 
 ## Results
 
-Mean absolute error (MAE) of the 244 next-session predictions. Lower is better.
+Mean absolute error (MAE) over the same 244 predictions. Lower is better.
 
 | Method | MAE (kg) |
 |---|---|
@@ -25,41 +36,34 @@ Mean absolute error (MAE) of the 244 next-session predictions. Lower is better.
 | Random forest, same predictors | 4.25 |
 | Mean of the last three sessions | 5.03 |
 
-![Mean absolute error by exercise for the baseline and ridge regression](reports/figures/fig3_error_by_exercise.png)
-
-- Ridge regression was less accurate than the baseline on all eight
-  exercises, though on Tricep Rope Pushdown by only 0.03 kg (3.316 vs
-  3.283 kg; the figure rounds these to 3.32 and 3.28). Over all 244
-  predictions, the difference was significant (paired Wilcoxon
-  signed-rank test, *p* < .001).
-- No set of predictors did better than using none: every model in the
-  feature ablation had a higher error than the no-predictor model (3.97 kg).
-- The result held when only sets of 10 or fewer repetitions were counted,
-  and when the Brzycki equation replaced the Epley equation.
-- Apple Watch sleep data did not help. On the 82 sessions with sleep data,
-  adding it raised the error from 4.64 to 4.91 kg (*p* = .64).
-
-Most changes between sessions are small: the score stayed exactly the same
-27.5% of the time, and 58% of changes were smaller than 2.5 kg. What
-probably drives the rest, such as effort, readiness on the day and which
-machine I used, is not in the log.
+- Over all 244 predictions, ridge regression was significantly less
+  accurate than the baseline (paired Wilcoxon signed-rank test,
+  *p* < .001).
+- No predictor helped: every model in the feature ablation was worse
+  than using no predictors at all (3.97 kg).
+- The result held with only sets of 10 or fewer reps, and with the
+  Brzycki equation instead of Epley.
+- Apple Watch sleep data did not help: on 82 sessions, adding it raised
+  the error from 4.64 to 4.91 kg (*p* = .64).
+- Limits: one athlete, 22–40 predictions per exercise, and effort (RPE)
+  was never logged.
 
 ## Method in brief
 
 - **Data:** my LiftOff export, 2,645 sets from July 26, 2024 to
   May 28, 2026. Two logging errors (14 sets) were removed.
-- **Score:** for each session, the e1RM of the best set, using the Epley
-  equation: weight × (1 + reps / 30).
+- **Score:** for each session, the estimated one-rep max (e1RM) of the
+  best set, using the Epley equation: weight × (1 + reps / 30).
 - **Exercises:** the eight exercises with at least 30 sessions before
   February 1, 2026 (324 sessions).
 - **Evaluation:** walk-forward. Each prediction uses only the sessions
   before it, and every model is refitted at each step, starting after 10
   sessions of history.
 - **Models:** ridge regression and a random forest, one per exercise,
-  predicting the change from the current session. The six predictors are
-  days since the previous session, the current score minus the recent
-  average, the spread of recent scores, session volume, the number of
-  earlier sessions, and the most reps in one set.
+  predicting the change from the current session from six predictors:
+  days since the last session, score versus the recent average, spread of
+  recent scores, session volume, number of earlier sessions, and most
+  reps in one set.
 
 ## Run it
 
