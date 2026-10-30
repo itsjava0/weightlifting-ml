@@ -8,7 +8,7 @@ accurately than the "same as last session" baseline using training-load,
 frequency, and recovery features?
 
 ### Data source
-- LiftOff app export, 2,645 raw set rows (Aug 2024 – May 2026)
+- LiftOff app export, 2,645 raw set rows (Jul 2024 – May 2026)
 - Single athlete (me); self-logged
 - Raw files stored untouched in data/raw/ (read-only)
 - Weights were entered in kg; LiftOff exports them in lb. The pipeline
@@ -158,7 +158,7 @@ features does not beat "same as last session".
 Strength changes slowly, so the last session's weight and reps are
 already a good estimate (25% of sessions don't change at all). The
 remaining changes depend on things I didn't log, like sleep and effort,
-and with only 10–47 sessions per exercise the model mostly learned noise.
+and with only 10–49 earlier sessions per exercise the model mostly learned noise.
 
 ## Entry 4 — 2026-10-25 — Feature test (ablation) and RandomForest
 
