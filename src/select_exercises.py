@@ -1,4 +1,4 @@
-"""Day 1: choose which exercises to model and save the modelling dataset.
+"""Entry 1: choose which exercises to model and save the modelling dataset.
 
 Rule: keep exercises with 30+ sessions before the Feb 2026 cutoff.
 A "session" here is one row of supervised_dataset.csv (one session of

@@ -1,4 +1,4 @@
-"""Day 5b: does sleep improve the prediction?
+"""Entry 6: does sleep improve the prediction?
 
 Sleep source: Apple Health export (data/raw/sleep_data.csv), Apple Watch
 records only, from late June 2025. Other sources in the export are left

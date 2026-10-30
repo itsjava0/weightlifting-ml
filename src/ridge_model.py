@@ -1,4 +1,4 @@
-"""Day 3: Ridge regression vs the last_value baseline, walk-forward.
+"""Entry 3: Ridge regression vs the last_value baseline, walk-forward.
 
 Design choices (see journal entry 3):
 
@@ -17,7 +17,7 @@ Design choices (see journal entry 3):
 
 3. Features are standardised (StandardScaler) inside each fit. Ridge
    penalises coefficient size, so unscaled features (volume in the
-   thousands, reps under 20) would be penalised unequally. The scaler is
+   thousands, reps up to 20) would be penalised unequally. The scaler is
    fitted on the training rows only, so no test information leaks in.
 
 4. Ridge strength (alpha) is chosen by RidgeCV on the training rows only.
@@ -28,7 +28,7 @@ Leakage check -- every feature is known by the end of the current session:
   rolling_std_score_3      spread of the 3 sessions before the current one
   total_volume_kg          current session's total volume
   sessions_trained_before  count of earlier sessions
-  best_set_reps            reps in the current session's top set
+  best_set_reps            most reps in any set of the current session
 None of them use the target or any later session.
 """
 from pathlib import Path

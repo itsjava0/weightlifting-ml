@@ -1,4 +1,4 @@
-"""Day 1 cleaning step: remove the two known logging errors from the raw
+"""Entry 1 cleaning step: remove the two known logging errors from the raw
 LiftOff export and write a cleaned copy to data/processed/.
 
 The raw file in data/raw/ is never modified.

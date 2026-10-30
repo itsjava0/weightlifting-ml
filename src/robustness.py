@@ -1,24 +1,28 @@
-"""Day 5: robustness checks. Does the main finding hold when the set-up changes?
+"""Entry 5: robustness checks. Does the main finding hold when the set-up changes?
 
-Main finding (Days 2-4): nothing beats "same as last session".
+Main finding (Entries 2-4): nothing beats "same as last session".
 
 Each check rebuilds the dataset from a set log, then re-runs BOTH the
 baseline and Ridge on that version, so they are always compared on the
 same data:
 
-  1. reference        Epley, all reps, original log (should reproduce Days 2-3)
+  1. reference        Epley, all reps, original log (should reproduce Entries 2-3)
   2. max 10 reps      only sets with <= 10 reps count toward the top set
                       (inside the range where 1RM formulas are reliable)
   3. Brzycki          Brzycki formula instead of Epley (sets <= 10 reps,
                       since Brzycki breaks down above that)
 
-All checks use the original LiftOff log (with the two Day 1 errors removed).
+All checks use the original LiftOff log, with the two logging errors from
+Entry 1 removed.
 
 The dataset builder follows the pipeline's definitions:
   - session = one timestamp; score = best e1RM over the session's sets
   - rows start once 3 earlier sessions exist; target = next session's score
   - rolling features use only sessions BEFORE the current one
-Check 1 confirms the builder matches the pipeline.
+Check 1 confirms the builder matches the pipeline, with one difference: the
+pipeline rounds each weight to 0.01 kg after converting it from lb, and this
+builder does not. That is why check 1 gives Ridge 4.15 kg instead of 4.14 kg
+(4.1475 vs 4.1429 to four decimals). The baseline is 3.76 kg in both.
 
 Outputs (in reports/): robustness_results.csv
 """
@@ -137,7 +141,7 @@ for name, df in checks:
     rows.append(run_check(name, df))
 
 res = pd.DataFrame(rows).round({"baseline_MAE": 2, "ridge_MAE": 2, "diff": 2,
-                                "baseline_MAE_%": 1, "wilcoxon_p": 3})
+                                "baseline_MAE_%": 1, "wilcoxon_p": 4})
 res.to_csv(REPORTS / "robustness_results.csv", index=False)
 
 pd.set_option("display.width", 220)

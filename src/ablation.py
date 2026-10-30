@@ -1,4 +1,4 @@
-"""Day 4: which features carry signal?
+"""Entry 4: which features carry signal?
 
 Three tests, all using the same walk-forward evaluator, the same 244
 predictions, and the same Ridge set-up as ridge_model.py:

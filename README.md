@@ -28,7 +28,10 @@ Mean absolute error (MAE) of the 244 next-session predictions. Lower is better.
 ![Mean absolute error by exercise for the baseline and ridge regression](reports/figures/fig3_error_by_exercise.png)
 
 - Ridge regression was less accurate than the baseline on all eight
-  exercises (paired Wilcoxon signed-rank test, *p* < .001).
+  exercises, though on Tricep Rope Pushdown by only 0.03 kg (3.316 vs
+  3.283 kg; the figure rounds these to 3.32 and 3.28). Over all 244
+  predictions, the difference was significant (paired Wilcoxon
+  signed-rank test, *p* < .001).
 - No set of predictors did better than using none: every model in the
   feature ablation had a higher error than the no-predictor model (3.97 kg).
 - The result held when only sets of 10 or fewer repetitions were counted,

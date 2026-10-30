@@ -1,4 +1,4 @@
-"""Day 6: the report figures. Reads only files produced by the other
+"""The report figures. Reads only files produced by the other
 scripts, so every figure matches the numbers in reports/.
 
 Following APA style, figures carry no title inside the image: the figure

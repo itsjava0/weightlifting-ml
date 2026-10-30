@@ -99,7 +99,9 @@ Beat last_value (3.76 kg overall, walk-forward), replacing the old
 
 ### Why last_value beat the rolling mean on every exercise
 The rolling mean lags behind because it includes older, weaker sessions:
-it predicted too low 62% of the time, about 1.15 kg under on average.
+it predicted too low 62% of the time, with a median error of 1.15 kg
+under (corrected on 2026-10-30; first written as "on average", but the
+mean is 1.05 kg).
 Since I'm still slowly progressing, and my weight often stays exactly
 the same between sessions, the most recent session is a better guide
 than an average of the last three.
@@ -142,6 +144,10 @@ Code: src/ridge_model.py
 | Tricep Rope Pushdown | 22 | 3.28 | 3.32 | +0.03 |
 | ALL | 244 | 3.76 | 4.14 | +0.38 |
 
+(Note added on 2026-10-30: Diff is calculated before rounding, so it can
+differ by 0.01 from the rounded columns. For Tricep Rope Pushdown,
+3.316 - 3.283 = 0.033 kg, shown as +0.03, although 3.32 - 3.28 = 0.04.)
+
 Ridge beats the baseline on 0 of 8 exercises. Paired Wilcoxon test on
 all 244 errors: p < 0.001, so the baseline's advantage is not chance.
 
@@ -156,7 +162,8 @@ features does not beat "same as last session".
 
 ### Why Ridge couldn't beat "same as last session"
 Strength changes slowly, so the last session's weight and reps are
-already a good estimate (25% of sessions don't change at all). The
+already a good estimate (27.5% of sessions don't change at all;
+corrected on 2026-10-30, first written as 25%). The
 remaining changes depend on things I didn't log, like sleep and effort,
 and with only 10–49 earlier sessions per exercise the model mostly learned noise.
 
@@ -224,10 +231,13 @@ compared on the same data. Code: src/robustness.py
 | Check | Predictions | Baseline | Ridge | Ridge wins | p |
 |---|---|---|---|---|---|
 | 1. Reference (Epley, all reps) | 244 | 3.76 | 4.15 | 0 of 8 | <0.001 |
-| 2. Top sets <=10 reps only | 115 | 5.44 | 7.26 | 1 of 8 | 0.001 |
+| 2. Top sets <=10 reps only | 115 | 5.44 | 7.26 | 1 of 8 | <0.001 |
 | 3. Brzycki, <=10 reps | 115 | 5.58 | 7.56 | 1 of 8 | <0.001 |
 
-1. The reference rebuild reproduces Days 2-3 (3.76 exactly; Ridge 4.15
+(Corrected on 2026-10-30: check 2's p was first written as 0.001. It is
+0.0006; robustness_results.csv rounded p to 3 decimals, now 4.)
+
+1. The reference rebuild reproduces Entries 2-3 (3.76 exactly; Ridge 4.15
    vs 4.14 from rounding differences), so the rebuild matches the pipeline.
 2. Keeping only sets within Brzycki's reliable range (<=10 reps), Ridge
    loses by even more. This check costs a lot of data: lateral raises

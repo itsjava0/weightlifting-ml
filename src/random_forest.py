@@ -1,8 +1,8 @@
-"""Day 4 (optional): does a non-linear model help?
+"""Entry 4 (optional): does a non-linear model help?
 
 RandomForest (as used by Baek et al., 2025) with the same features, the
 same "predict the change" set-up, and the same walk-forward evaluation as
-ridge_model.py. Kept in the report only if it honestly beats Ridge.
+ridge_model.py. Reported as a check; it did not beat Ridge.
 """
 from pathlib import Path
 
@@ -31,7 +31,7 @@ df["change"] = df["target"] - df["performance_score"]
 
 def rf_predict(train, test_row):
     # min_samples_leaf=5 stops the trees memorising single sessions,
-    # which matters with only 10-47 training sessions per exercise.
+    # which matters with only 10-49 training sessions per exercise.
     model = RandomForestRegressor(n_estimators=200, min_samples_leaf=5,
                                   random_state=0, n_jobs=-1)
     model.fit(train[FEATURES], train["change"])

@@ -1,4 +1,4 @@
 check,rows,n_predictions,baseline_MAE,ridge_MAE,diff,baseline_MAE_%,ridge_wins_exercises,wilcoxon_p
-"1. reference (Epley, all reps)",324,244,3.76,4.15,0.39,5.4,0,0.0
-2. top set max 10 reps,194,115,5.44,7.26,1.81,6.1,1,0.001
-"3. Brzycki, max 10 reps",194,115,5.58,7.56,1.99,6.3,1,0.0
+"1. reference (Epley, all reps)",324,244,3.76,4.15,0.39,5.4,0,0.0002
+2. top set max 10 reps,194,115,5.44,7.26,1.81,6.1,1,0.0006
+"3. Brzycki, max 10 reps",194,115,5.58,7.56,1.99,6.3,1,0.0001
